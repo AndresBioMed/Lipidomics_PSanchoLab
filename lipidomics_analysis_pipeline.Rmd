@@ -388,27 +388,53 @@ save_plot("plots/small_multiples_plot_N215.png",small_multiples_plot, base_width
 
 ------------------------------------------------------------------------
 
-## Top Lipids by Loading
-```{r top loadings lipidr}
-mvaresults = mva(d_invitro, method = "OPLS-DA", group_col = "cell_line")
+## Top Lipids by Loading {.tabset}
+
+### Eto vs Control
+```{r top loadings eto vs control lipidr}
+mvaresults = mva(d_invitro[,data_clin_invitro$treatment %in% c("control", "eto")], method = "OPLS-DA", group_col = "treatment")
 top_loadings_plots<-plot_mva_loadings(mvaresults, color_by="Class", top.n=15)
 top_loadings_plots +
   theme_Publication() + 
-  labs(title = "Loadings/Influence of each Lipid in OPLS-DA Analysis") +
+  labs(title = "Loadings/Influence of each Lipid in OPLS-DA Analysis", subtitle = "Eto vs Control") +
   guides(alpha = "none")
-save_plot("plots/top_loadings.png",top_loadings_plots +
+save_plot("plots/top_loadings_eto_vs_control.png",top_loadings_plots +
   theme_Publication() + 
-  labs(title = "Loadings/Influence of each Lipid in OPLS-DA Analysis") +
+  labs(title = "Loadings/Influence of each Lipid in OPLS-DA Analysis", subtitle = "Eto vs Control") +
   guides(alpha = "none"), base_width = 10, base_height = 7)
 top<-top_lipids(mvaresults, top.n=100)
 top_molecules<-top$Molecule
-write.csv(top,"data/top_loadings_pca.csv", row.names = FALSE)
+write.csv(top,"data/top_loadings_opls_eto_vs_control.csv", row.names = FALSE)
 ```
 
-```{r top lipids}
+```{r top lipids eto vs control}
 datatable(top[, c(2,7,8)], 
           extensions = c('KeyTable', "FixedHeader"), 
-          caption = "Top 100 Lipids by Loading Relevance",
+          caption = "Top 100 Lipids by Loading Relevance Eto vs Control",
+          options = list(keys = TRUE, searchHighlight = TRUE, pageLength = 10, lengthMenu = c("10", "25", "50", "100")))
+```
+
+### MCM vs Control
+```{r top loadings mcm vs control lipidr}
+mvaresults = mva(d_invitro[,data_clin_invitro$treatment %in% c("control", "mcm")], method = "OPLS-DA", group_col = "treatment")
+top_loadings_plots<-plot_mva_loadings(mvaresults, color_by="Class", top.n=15)
+top_loadings_plots +
+  theme_Publication() + 
+  labs(title = "Loadings/Influence of each Lipid in OPLS-DA Analysis", subtitle = "MCM vs Control") +
+  guides(alpha = "none")
+save_plot("plots/top_loadings_eto_vs_control.png",top_loadings_plots +
+  theme_Publication() + 
+  labs(title = "Loadings/Influence of each Lipid in OPLS-DA Analysis", subtitle = "MCM vs Control") +
+  guides(alpha = "none"), base_width = 10, base_height = 7)
+top<-top_lipids(mvaresults, top.n=100)
+top_molecules<-top$Molecule
+write.csv(top,"data/top_loadings_opls_mcm_vs_control.csv", row.names = FALSE)
+```
+
+```{r top lipids mcm vs control}
+datatable(top[, c(2,7,8)], 
+          extensions = c('KeyTable', "FixedHeader"), 
+          caption = "Top 100 Lipids by Loading Relevance MCM vs Control",
           options = list(keys = TRUE, searchHighlight = TRUE, pageLength = 10, lengthMenu = c("10", "25", "50", "100")))
 ```
 
