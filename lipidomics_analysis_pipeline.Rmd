@@ -1,0 +1,746 @@
+---
+title: "Lipidomics Analysis"
+author: "Andrés Gordo Ortiz (PSancho Lab)"
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output:
+  html_document:
+    code_folding: hide
+    code_download: false  
+    df_print: paged
+    theme: flatly
+    highlight: tango
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: true
+    number_sections: true
+---
+
+```{r logo, echo=FALSE}
+htmltools::img(src = knitr::image_uri("logo.png"), 
+               alt = 'logo', 
+               style = 'position:absolute; top:0; right:0; width:150px; padding:10px;')
+
+```
+
+```{css, echo=FALSE}
+/* Custom CSS to enhance styling */
+body {
+  font-family: 'Gill Sans', sans-serif;
+}
+
+h1 {
+  color: #2c3e50;
+  font-family: 'Ubuntu', sans-serif; /* Set header font to Ubuntu */
+}
+
+h2 {
+  color: #3498db;
+  font-family: 'Ubuntu', sans-serif; /* Set header font to Ubuntu */
+}
+
+h3 {
+  color: #E888B4;
+  font-family: 'Ubuntu', sans-serif; /* Set header font to Ubuntu */
+}
+p {
+  text-align: justify;
+}
+```
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(ggthemes)
+library(plotly)
+library(limma)
+library(pheatmap)
+library(tidyverse)
+library(readxl)
+library(lipidr)
+library(DT)
+library(limma)
+library(cowplot)
+library(svglite)
+library(RColorBrewer) 
+library(gplots)
+library(heatmaply)
+
+source('ggplot_theme_Publication.R')
+dir.create("plots", showWarnings = FALSE, recursive = TRUE)
+dir.create("data", showWarnings = FALSE, recursive = TRUE)
+
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+# Data Tidying
+```{r tidydata}
+data_253 <- read_excel("Copia de in vitro_mzml-out_5_7_1000-1.xlsx",sheet = "253")
+#Delete every column but 1,2 and 22:30
+data_253 <- data_253[,c(1,22:30)]
+#Delete every row with NAs
+data_253 <- data_253[complete.cases(data_253),]
+
+#Repeat everything but with sheet="215"
+data_215 <- read_excel("Copia de in vitro_mzml-out_5_7_1000-1.xlsx",sheet = "215")
+data_215 <- data_215[,c(1,22:30)]
+data_215 <- data_215[complete.cases(data_215),]
+
+#Reorder data_253 to match data_215[[1]]
+data_253 <- data_253[match(data_215[[1]],data_253[[1]]),]
+data_253[,1]<-data_215[,1]
+
+#Create a new merged dataframe from the two
+data_253_215 <- merge(data_253,data_215,by="NAME",all=TRUE)
+
+
+#Prepare sample names data_253_215 column names
+sample_names<-names(data_253_215[,-1])
+
+#Simplify data samples to Sx
+names(data_253_215)<-c("NAME",paste0("S",1:18))
+
+#Make Clinical (phenotypic excel)
+data_clin_invitro<-data.frame(sample=names(data_253_215[,-1]), cell_line=as.factor(rep(c("line_253","line_215"),each=9)), 
+                      treatment=rep(c("control", "eto", "mcm"), each=3, times=2),replica=as.factor(rep(c("rep_1","rep_2","rep_3"),times=6)),stringsAsFactors = FALSE)
+
+
+#Eliminate parenthesis from data_253_215[,1]
+data_matrix_invitro<-data_253_215
+data_matrix_invitro[,1]<-gsub("\\(|\\)","",data_253_215[,1])
+#Add a space between the last letter and first number of data_matrix[,1]
+data_matrix_invitro[,1]<-gsub("(?<=[A-Za-z])(?=[0-9])"," ",data_matrix_invitro[,1],perl=TRUE)
+
+#Delete all "-" in "-O" in data_matrix[,1]
+data_matrix_invitro[,1]<-gsub("-O","O",data_matrix_invitro[,1])
+
+#Change - symbol in some fatty acid names to make it standard
+data_matrix_invitro[79,1]<-"DiHexCerd 18:1/14:13"
+data_matrix_invitro[82,1]<-"DiHexCerd 18:1/16:15"
+data_matrix_invitro[87,1]<-"DiHexCerd 18:1/22:21"
+data_matrix_invitro[89,1]<-"DiHexCerd 18:1/24:23"
+data_matrix_invitro[93,1]<-"DiHexCerd 20:1/12:11"
+
+
+#Subset both cell lines
+data_matrix_253<-data_matrix_invitro[, 1:10]
+#Eliminate all rows with NAs in data_matrix_253
+data_matrix_253<-data_matrix_253[complete.cases(data_matrix_253),]
+
+data_matrix_215<-data_matrix_invitro[, c(1,11:19)]
+#Eliminate all rows with NAs in data_matrix_253
+data_matrix_215<-data_matrix_215[complete.cases(data_matrix_215),]
+
+#Export data_clin and data_253_215 to .csv, without rownames
+write.csv(data_clin_invitro,"data/data_clin_invitro.csv", row.names = FALSE)
+write.csv(data_matrix_invitro,"data/data_matrix_invitro.csv", row.names = FALSE)
+
+
+d_invitro <- as_lipidomics_experiment(read.csv("data_matrix_invitro.csv"))
+d_invitro <- add_sample_annotation(d_invitro, "data_clin_invitro.csv")
+```
+
+
+
+# Quality Checking of Lipids
+
+## Sample Quality
+```{r qc_plot_samples}
+#Quality check samples
+qc_plot<-plot_samples(d_invitro, type = "boxplot", log = TRUE, color = "treatment")
+qc_plot<-qc_plot +
+  theme_Publication() +  # Change the theme to minimal
+  labs(title = "QC Boxplot: Distribution of Log2-Area per sample") 
+qc_plot
+save_plot("plots/qc_plot_samples.png",qc_plot, base_width = 15, base_height = 7)
+
+```
+
+## Lipid Class Distribution
+
+```{r qc_plot_lipid}
+#Lipid class abundance
+lipid_class_plot<-plot_lipidclass(d_invitro, "boxplot")
+
+lipid_class_plot +
+  theme_Publication() +
+  labs(title = "Lipid Class Boxplot: Distribution of Log2-Area per Lipid subtype") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Angle the x-axis labels
+
+save_plot("plots/qc_plot_lipids.png",lipid_class_plot +
+  theme_Publication() +
+  labs(title = "Lipid Class Boxplot: Distribution of Log2-Area per Lipid subtype") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)), base_width = 15, base_height = 7)
+
+```
+
+------------------------------------------------------------------------
+
+# Principal Component Analysis
+
+## All Samples (N253 & N215) {.tabset}
+
+#### By Cell Line
+```{r pca_all_cellline}
+exp_matrix<-assay(d_invitro)
+exp_matrix_complete<-exp_matrix[complete.cases(exp_matrix),]
+condition <- colData(d_invitro)$treatment
+condition <- factor(condition)
+sampleLabels<-rownames(colData(d_invitro))
+cell_line<-colData(d_invitro)$cell_line
+
+pca.res <- prcomp(t(exp_matrix_complete))
+pc.var<-pca.res$sdev^2 # sdev^2 captures these eigenvalues from the PCA result
+pc.per<-round(pc.var/sum(pc.var)*100, 1) 
+pca.res.df <- pca.res$x[,1:4] %>% 
+  as_tibble() %>%
+  add_column(sample = sampleLabels,
+             group = condition,
+             cell_line= cell_line)
+
+pca.plot_cell_line<- ggplot(pca.res.df) +
+  aes(x=PC1, y=PC2, label=sampleLabels, color = cell_line) +
+  geom_point(size=4) +
+  stat_ellipse() +
+  xlab(paste0("PC1 (",pc.per[1],"%",")")) + 
+  ylab(paste0("PC2 (",pc.per[2],"%",")")) +
+  labs(title="PCA plot coloured by Cell Line",
+       caption=paste0("produced on ", Sys.time())) +
+  coord_fixed() +
+  theme_Publication()
+pca.plot_cell_line
+save_plot("plots/pca_all_samples_cell_line.png",pca.plot_cell_line, base_width = 15, base_height = 7)
+
+```
+
+### By Treatment
+```{r pca_all_treatment}
+pca.plot_treatment<- ggplot(pca.res.df) +
+  aes(x=PC1, y=PC2, label=sampleLabels, color = condition) +
+  geom_point(size=4) +
+  stat_ellipse() +
+  xlab(paste0("PC1 (",pc.per[1],"%",")")) + 
+  ylab(paste0("PC2 (",pc.per[2],"%",")")) +
+  labs(title="PCA plot coloured by Treatment",
+       caption=paste0("produced on ", Sys.time())) +
+  coord_fixed() +
+  theme_Publication()
+pca.plot_treatment
+save_plot("plots/pca_all_samples_treatment.png",pca.plot_treatment, base_width = 15, base_height = 7)
+
+```
+
+### By Replicate
+```{r pca_all_replicate}
+replicate<-colData(d_invitro)$replica
+pca.plot_replicate<- ggplot(pca.res.df) +
+  aes(x=PC1, y=PC2, label=sampleLabels, color = replicate) +
+  geom_point(size=4) +
+  stat_ellipse() +
+  xlab(paste0("PC1 (",pc.per[1],"%",")")) + 
+  ylab(paste0("PC2 (",pc.per[2],"%",")")) +
+  labs(title="PCA plot coloured by Condition",
+       caption=paste0("produced on ", Sys.time())) +
+  coord_fixed() +
+  theme_Publication()
+pca.plot_replicate
+save_plot("plots/pca_all_samples_replicate.png",pca.plot_replicate, base_width = 15, base_height = 7)
+
+```
+
+
+
+### Small Multiples Plot
+```{r smallmultiples_all}
+pca.pivot <- pivot_longer(pca.res.df, 
+                          cols = PC1:PC4, 
+                          names_to = "PC", 
+                          values_to = "loadings") 
+
+small_multiples_plot <- ggplot(pca.pivot) +
+  aes(x = sample, y = loadings, fill = sample) + 
+  geom_bar(stat = "identity") +
+  facet_wrap(~PC) +
+  labs(title = "PCA 'small multiples' plot",
+       caption = paste0("produced on ", Sys.time())) +
+  theme_bw() +
+  theme(legend.position = "none",
+        axis.title.y = element_blank()) + 
+  coord_flip()
+small_multiples_plot
+save_plot("plots/small_multiples_plot_all_samples.png",small_multiples_plot, base_width = 15, base_height = 7)
+```
+
+------------------------------------------------------------------------
+
+## N253 Cell Line only {.tabset}
+
+### By Treatment
+```{r pca_N253_treatment}
+exp_matrix<-assay(d_invitro)
+exp_matrix_complete<-exp_matrix[complete.cases(exp_matrix),]
+exp_matrix_complete_N253<-exp_matrix_complete[,1:9]
+condition <- colData(d_invitro)$treatment[1:9]
+condition <- factor(condition)
+sampleLabels<-rownames(colData(d_invitro))[1:9]
+cell_line<-colData(d_invitro)$cell_line[1:9]
+
+
+pca.res <- prcomp(t(exp_matrix_complete_N253))
+pc.var<-pca.res$sdev^2 # sdev^2 captures these eigenvalues from the PCA result
+pc.per<-round(pc.var/sum(pc.var)*100, 1) 
+pca.res.df <- pca.res$x[,1:4] %>% 
+  as_tibble() %>%
+  add_column(sample = sampleLabels,
+             group = condition,
+             cell_line= cell_line)
+
+pca.plot_treatment<- ggplot(pca.res.df) +
+  aes(x=PC1, y=PC2, label=sampleLabels, color = condition) +
+  geom_point(size=4) +
+  stat_ellipse() +
+  xlab(paste0("PC1 (",pc.per[1],"%",")")) + 
+  ylab(paste0("PC2 (",pc.per[2],"%",")")) +
+  labs(title="PCA plot coloured by Condition in N253",
+       caption=paste0("produced on ", Sys.time())) +
+  coord_fixed() +
+  theme_Publication()
+pca.plot_treatment
+save_plot("plots/pca_N253_treatment.png",pca.plot_treatment, base_width = 15, base_height = 7)
+```
+
+### Small Multiples Plot
+```{r smallmultiples_N253}
+pca.pivot <- pivot_longer(pca.res.df, 
+                          cols = PC1:PC4, 
+                          names_to = "PC", 
+                          values_to = "loadings") 
+
+small_multiples_plot <- ggplot(pca.pivot) +
+  aes(x = sample, y = loadings, fill = sample) + 
+  geom_bar(stat = "identity") +
+  facet_wrap(~PC) +
+  labs(title = "PCA 'small multiples' plot in N253",
+       caption = paste0("produced on ", Sys.time())) +
+  theme_bw() +
+  theme(legend.position = "none",
+        axis.title.y = element_blank()) + 
+  coord_flip()
+small_multiples_plot
+save_plot("plots/small_multiples_plot_N253.png",small_multiples_plot, base_width = 15, base_height = 7)
+```
+
+## N215 Cell Line only {.tabset}
+
+### By Treatment
+```{r pca_N215_treatment}
+exp_matrix<-assay(d_invitro)
+exp_matrix_complete<-exp_matrix[complete.cases(exp_matrix),]
+exp_matrix_complete_N215<-exp_matrix_complete[,10:18]
+condition <- colData(d_invitro)$treatment[10:18]
+condition <- factor(condition)
+sampleLabels<-rownames(colData(d_invitro))[10:18]
+cell_line<-colData(d_invitro)$cell_line[10:18]
+
+
+pca.res <- prcomp(t(exp_matrix_complete_N215))
+pc.var<-pca.res$sdev^2 # sdev^2 captures these eigenvalues from the PCA result
+pc.per<-round(pc.var/sum(pc.var)*100, 1) 
+pca.res.df <- pca.res$x[,1:4] %>% 
+  as_tibble() %>%
+  add_column(sample = sampleLabels,
+             group = condition,
+             cell_line= cell_line)
+
+pca.plot_treatment<- ggplot(pca.res.df) +
+  aes(x=PC1, y=PC2, label=sampleLabels, color = condition) +
+  geom_point(size=4) +
+  stat_ellipse() +
+  xlab(paste0("PC1 (",pc.per[1],"%",")")) + 
+  ylab(paste0("PC2 (",pc.per[2],"%",")")) +
+  labs(title="PCA plot coloured by Condition in N215",
+       caption=paste0("produced on ", Sys.time())) +
+  coord_fixed() +
+  theme_Publication()
+pca.plot_treatment
+save_plot("plots/pca_N215_treatment.png",pca.plot_treatment, base_width = 15, base_height = 7)
+```
+
+### Small Multiples Plot
+```{r smallmultiples_N215}
+pca.pivot <- pivot_longer(pca.res.df, 
+                          cols = PC1:PC4, 
+                          names_to = "PC", 
+                          values_to = "loadings") 
+
+small_multiples_plot <- ggplot(pca.pivot) +
+  aes(x = sample, y = loadings, fill = sample) + 
+  geom_bar(stat = "identity") +
+  facet_wrap(~PC) +
+  labs(title = "PCA 'small multiples' plot in N215",
+       caption = paste0("produced on ", Sys.time())) +
+  theme_bw() +
+  theme(legend.position = "none",
+        axis.title.y = element_blank()) + 
+  coord_flip()
+small_multiples_plot
+save_plot("plots/small_multiples_plot_N215.png",small_multiples_plot, base_width = 15, base_height = 7)
+```
+
+------------------------------------------------------------------------
+
+## Top Lipids by Loading
+```{r top loadings lipidr}
+mvaresults = mva(d_invitro, method = "OPLS-DA", group_col = "cell_line")
+top_loadings_plots<-plot_mva_loadings(mvaresults, color_by="Class", top.n=15)
+top_loadings_plots +
+  theme_Publication() + 
+  labs(title = "Loadings/Influence of each Lipid in OPLS-DA Analysis") +
+  guides(alpha = "none")
+save_plot("plots/top_loadings.png",top_loadings_plots +
+  theme_Publication() + 
+  labs(title = "Loadings/Influence of each Lipid in OPLS-DA Analysis") +
+  guides(alpha = "none"), base_width = 10, base_height = 7)
+top<-top_lipids(mvaresults, top.n=100)
+top_molecules<-top$Molecule
+write.csv(top,"data/top_loadings_pca.csv", row.names = FALSE)
+```
+
+```{r top lipids}
+datatable(top[, c(2,7,8)], 
+          extensions = c('KeyTable', "FixedHeader"), 
+          caption = "Top 100 Lipids by Loading Relevance",
+          options = list(keys = TRUE, searchHighlight = TRUE, pageLength = 10, lengthMenu = c("10", "25", "50", "100")))
+```
+
+------------------------------------------------------------------------
+
+# Differentially Expressed Lipids
+
+An **important** note: all the contrasts, design matrix and differential expression analysis are made according to the formula **condition1- condition2**. This means that a *logfold change* > 0 shows that the first condition is over represented, whereas a *logfold change* < 0 shows the contrary.
+
+## MCM vs Control
+```{r limma and Vplot mcm vs control}
+condition <- colData(d_invitro)$treatment
+condition <- factor(condition)
+sampleLabels<-rownames(colData(d_invitro))
+design <- model.matrix(~0 + condition)
+colnames(design) <- levels(condition)
+
+lipid_matrix_norm <- voom(exp_matrix_complete, design, plot = FALSE)
+fit <- lmFit(lipid_matrix_norm, design)
+contrast.matrix_control_vs_mcm <- makeContrasts(treatment = mcm - control,
+                                 levels=design)
+
+fits <- contrasts.fit(fit, contrast.matrix_control_vs_mcm)
+ebFit <- eBayes(fits)
+myTopHits <- topTable(ebFit, adjust ="BH", coef=1, number=40000, sort.by="logFC")
+
+
+
+myTopHits.df <- myTopHits %>%
+  as_tibble(rownames = "Lipid_Name")
+
+
+write.csv(myTopHits.df, "data/stats_mcm_vs_control.csv", row.names = FALSE)
+
+
+
+vplot <- ggplot(myTopHits.df) +
+  aes(y=-log10(adj.P.Val), x=logFC, text = paste("Symbol:", Lipid_Name)) +
+  geom_point(size=2) +
+  geom_hline(yintercept = -log10(0.05), linetype="longdash", colour="grey", size=1) +
+  geom_vline(xintercept = 1, linetype="longdash", colour="#BE684D", size=1) +
+  geom_vline(xintercept = -1, linetype="longdash", colour="#2C467A", size=1) +
+  #annotate("rect", xmin = 1, xmax = 12, ymin = -log10(0.01), ymax = 7.5, alpha=.2, fill="#BE684D") +
+  #annotate("rect", xmin = -1, xmax = -12, ymin = -log10(0.01), ymax = 7.5, alpha=.2, fill="#2C467A") +
+  labs(title="Volcano plot [MCM vs Control]",
+       caption=paste0("produced on ", Sys.time())) +
+  scale_x_continuous(n.breaks = 8)+
+  theme_Publication()
+
+save_plot("plots/volcano_mcm_vs_control.svg",vplot, base_width = 15, base_height = 7)
+save_plot("plots/volcano_mcm_vs_control.png",vplot, base_width = 15, base_height = 7)
+
+# Only in html ggplotly(vplot)
+ggplotly(vplot)
+
+
+```
+
+### Table of DE Lipids
+
+To identify differentially expressed lipids, precision weights were first applied to each lipid based on its mean-variance relationship using [VOOM](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Then, linear modeling and bayesian stats were employed via [Limma](https://academic.oup.com/nar/article/43/7/e47/2414268) to find lipids that were over- or under-represented by **1-logfold or more, with a false-discovery rate (FDR) of 0.05**. Multiple testing was assessed through the Benjamini-Hochberg method.
+
+```{r DEL mcm vs control}
+results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
+colnames(lipid_matrix_norm$E) <- sampleLabels
+diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
+diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
+
+resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
+write.csv(resultsDEL, "data/diffLipids_mcm_vs_control.csv", row.names = FALSE)
+
+```
+
+```{r table DEL mcm vs control}
+datatable(resultsDEL, 
+          extensions = c('KeyTable', "FixedHeader"),
+          caption="Diferentially Expressed Lipids in MCM vs Control",
+          options = list(keys = TRUE, 
+                         searchHighlight = TRUE, 
+                         pageLength = 10, 
+                         lengthMenu = c("10", "25", "50", "100")))
+
+```
+***As it can be seen, no Lipid was found to be differentially represented (FDR<=0.05, LogFC>=1) between MCM and Control samples, which makes sense according to the PCA Plots results.***
+
+## Eto vs Control
+```{r limma and Vplot etoc vs control}
+
+contrast.matrix_control_vs_eto <- makeContrasts(treatment = eto - control,
+                                 levels=design)
+
+fits <- contrasts.fit(fit, contrast.matrix_control_vs_eto)
+ebFit <- eBayes(fits)
+myTopHits <- topTable(ebFit, adjust ="BH", coef=1, number=40000, sort.by="logFC")
+
+
+
+myTopHits.df <- myTopHits %>%
+  as_tibble(rownames = "Lipid_Name")
+
+
+write.csv(myTopHits.df, "data/stats_eto_vs_control.csv", row.names = FALSE)
+
+
+
+vplot <- ggplot(myTopHits.df) +
+  aes(y=-log10(adj.P.Val), x=logFC, text = paste("Symbol:", Lipid_Name)) +
+  geom_point(size=2) +
+  geom_hline(yintercept = -log10(0.05), linetype="longdash", colour="grey", size=1) +
+  geom_vline(xintercept = 1, linetype="longdash", colour="#BE684D", size=1) +
+  geom_vline(xintercept = -1, linetype="longdash", colour="#2C467A", size=1) +
+  #annotate("rect", xmin = 1, xmax = 12, ymin = -log10(0.01), ymax = 7.5, alpha=.2, fill="#BE684D") +
+  #annotate("rect", xmin = -1, xmax = -12, ymin = -log10(0.01), ymax = 7.5, alpha=.2, fill="#2C467A") +
+  labs(title="Volcano plot [Eto vs Control]",
+       caption=paste0("produced on ", Sys.time())) +
+  scale_x_continuous(n.breaks = 8)+
+  theme_Publication()
+
+save_plot("plots/volcano_eto_vs_control.svg",vplot, base_width = 15, base_height = 7)
+save_plot("plots/volcano_eto_vs_control.png",vplot, base_width = 15, base_height = 7)
+
+# Only in html ggplotly(vplot)
+ggplotly(vplot)
+
+
+```
+
+### Table of DE Lipids
+
+To identify differentially expressed lipids, precision weights were first applied to each lipid based on its mean-variance relationship using [VOOM](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Then, linear modeling and bayesian stats were employed via [Limma](https://academic.oup.com/nar/article/43/7/e47/2414268) to find lipids that were over- or under-represented by **1-logfold or more, with a false-discovery rate (FDR) of 0.05**. Multiple testing was assessed through the *Benjamini-Hochberg* method.
+
+```{r DEL eto vs control}
+results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
+colnames(lipid_matrix_norm$E) <- sampleLabels
+diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
+diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
+
+resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
+write.csv(resultsDEL, "data/diffLipids_eto_vs_control.csv", row.names = FALSE)
+
+```
+
+```{r table DEL eto vs control}
+datatable(resultsDEL, 
+          extensions = c('KeyTable', "FixedHeader"),
+          caption="Differentially Expressed Lipids in Eto vs Control",
+          options = list(keys = TRUE, 
+                         searchHighlight = TRUE, 
+                         pageLength = 10, 
+                         lengthMenu = c("10", "25", "50", "100")))
+
+```
+
+------------------------------------------------------------------------
+
+# Heatmaps {.tabset}
+
+Pearson correlation was used to cluster all differentially expressed lipids, which were then represented as heatmap with the data scaled by *Zscore* for each row. On the other hand, Spearman correlation was used to cluster all samples. Two *modules* can be seen, being either over- or under-represented depending on the condition of the samples.
+
+## Only DE Lipids Eto vs Control
+
+```{r heatmap DEL, results='hide'}
+myheatcolors <- rev(brewer.pal(name="RdBu", n=11))
+clustRows <- hclust(as.dist(1-cor(t(diffLipids), method="pearson")), method="complete") 
+
+clustColumns <- hclust(as.dist(1-cor(diffLipids, method="spearman")), method="complete")
+module.assign <- cutree(clustRows, k=2) #Important parametre
+module.color <- rainbow(length(unique(module.assign)), start=0.1, end=0.9) 
+module.color <- module.color[as.vector(module.assign)] 
+
+module.assign_col<-cutree(clustColumns, k=2) #Important parametre
+module.color_col <- rainbow(length(unique(module.assign_col)), start=0.1, end=0.9) 
+module.color_col <- module.color_col[as.vector(module.assign_col)]
+
+svg(file = "plots/heatmap_DEL_eto_vs_control.svg")
+heatmap.2(diffLipids, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Heatmap of Lipid Differences",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+
+png(file = "plots/heatmap_DEL_eto_vs_control.png")
+heatmap.2(diffLipids, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Heatmap of Lipid Differences",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+```
+
+```{r heatmaply DELs}
+
+heatmaply(diffLipids, 
+          colors = myheatcolors,
+          Rowv=as.dendrogram(clustRows),
+          RowSideColors=module.color,
+          ColSideColors = module.color_col,
+          showticklabels=c(TRUE,FALSE),
+          scale='row',
+          main ="Heatmap across all Lipids")
+
+```
+
+## All Lipids
+
+```{r heatmap ALL, results='hide'}
+myheatcolors <- rev(brewer.pal(name="RdBu", n=11))
+clustRows <- hclust(as.dist(1-cor(t(lipid_matrix_norm$E), method="pearson")), method="complete") 
+
+clustColumns <- hclust(as.dist(1-cor(lipid_matrix_norm$E, method="spearman")), method="complete")
+module.assign <- cutree(clustRows, k=2) #Important parametre
+module.color <- rainbow(length(unique(module.assign)), start=0.1, end=0.9) 
+module.color <- module.color[as.vector(module.assign)] 
+
+module.assign_col<-cutree(clustColumns, k=2) #Important parametre
+module.color_col <- rainbow(length(unique(module.assign_col)), start=0.1, end=0.9) 
+module.color_col <- module.color_col[as.vector(module.assign_col)]
+
+svg(file = "plots/heatmap_all.svg")
+heatmap.2(lipid_matrix_norm$E, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Heatmap of Lipid Differences",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+
+png(file = "plots/heatmap_all.png")
+heatmap.2(lipid_matrix_norm$E, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Heatmap of Lipid Differences",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+```
+
+```{r heatmaply all}
+heatmaply(lipid_matrix_norm$E, 
+          colors = myheatcolors,
+          Rowv=as.dendrogram(clustRows),
+          RowSideColors=module.color,
+          ColSideColors = module.color_col,
+          showticklabels=c(TRUE,FALSE),
+          scale='row',
+          main ="Heatmap across all Lipids")
+```
+
+
+------------------------------------------------------------------------
+
+
+
+# Session info
+
+The output from running 'sessionInfo' is shown below and details all packages and version necessary to reproduce the results in this report.
+
+```{r session info}
+sessionInfo()
+```
