@@ -179,7 +179,7 @@ save_plot("plots/qc_plot_lipids.png",lipid_class_plot +
 
 ## All Samples (N253 & N215) {.tabset}
 
-#### By Cell Line
+### By Cell Line
 ```{r pca_all_cellline}
 exp_matrix<-assay(d_invitro)
 exp_matrix_complete<-exp_matrix[complete.cases(exp_matrix),]
