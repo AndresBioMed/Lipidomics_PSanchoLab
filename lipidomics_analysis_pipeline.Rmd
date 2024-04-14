@@ -422,7 +422,7 @@ top_loadings_plots +
   theme_Publication() + 
   labs(title = "Loadings/Influence of each Lipid in OPLS-DA Analysis", subtitle = "MCM vs Control") +
   guides(alpha = "none")
-save_plot("plots/top_loadings_eto_vs_control.png",top_loadings_plots +
+save_plot("plots/top_loadings_mcm_vs_control.png",top_loadings_plots +
   theme_Publication() + 
   labs(title = "Loadings/Influence of each Lipid in OPLS-DA Analysis", subtitle = "MCM vs Control") +
   guides(alpha = "none"), base_width = 10, base_height = 7)
