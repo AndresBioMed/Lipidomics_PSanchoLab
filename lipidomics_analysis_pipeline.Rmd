@@ -911,10 +911,29 @@ venn_eto <- ggvenn(data = list(N215 = DEL_N215_eto, N253 = DEL_N253_eto, Both=DE
 venn_eto
 ```
 
+```{r venn eto tibble}
+# Obtain all the DEL which are in common
+common_eto<-Reduce(intersect, list(DEL_N215_eto, DEL_N253_eto, DEL_all_eto))
+# Output a table with the list of comon_eto
+common_eto.df<-as_tibble(common_eto)
+write.csv(common_eto.df, "data/venn_intersection_DEL_eto.csv", row.names = FALSE)
+datatable(common_eto.df, 
+          extensions = c('KeyTable', "FixedHeader"),
+          caption="Common Differentially Expressed Lipids in Eto vs Control",
+          options = list(keys = TRUE, 
+                         searchHighlight = TRUE, 
+                         pageLength = 10, 
+                         lengthMenu = c("10", "25", "50", "100")))
+
+```
+
 ### MCM vs Control
 ```{r venn mcm}
 venn_mcm <- ggvenn(data = list(N215 = DEL_N215_mcm, N253 = DEL_N253_mcm, Both=DEL_all_mcm))
 venn_mcm
+# Obtain all the DEL which are in common
+common_mcm<-Reduce(intersect, list(DEL_N215_mcm, DEL_N253_mcm, DEL_all_mcm))
+
 ```
 
 ------------------------------------------------------------------------
