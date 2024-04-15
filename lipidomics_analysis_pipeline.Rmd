@@ -444,15 +444,17 @@ datatable(top[, c(2,7,8)],
 
 An **important** note: all the contrasts, design matrix and differential expression analysis are made according to the formula **condition1- condition2**. This means that a *logfold change* > 0 shows that the first condition is over represented, whereas a *logfold change* < 0 shows the contrary.
 
-## MCM vs Control
+## N215
+
+### MCM vs Control
 ```{r limma and Vplot mcm vs control}
-condition <- colData(d_invitro)$treatment
+condition <- colData(d_invitro)$treatment[10:18]
 condition <- factor(condition)
-sampleLabels<-rownames(colData(d_invitro))
+sampleLabels<-rownames(colData(d_invitro))[10:18]
 design <- model.matrix(~0 + condition)
 colnames(design) <- levels(condition)
 
-lipid_matrix_norm <- voom(exp_matrix_complete, design, plot = FALSE)
+lipid_matrix_norm <- voom(exp_matrix_complete_N215, design, plot = FALSE)
 fit <- lmFit(lipid_matrix_norm, design)
 contrast.matrix_control_vs_mcm <- makeContrasts(treatment = mcm - control,
                                  levels=design)
@@ -467,7 +469,7 @@ myTopHits.df <- myTopHits %>%
   as_tibble(rownames = "Lipid_Name")
 
 
-write.csv(myTopHits.df, "data/stats_mcm_vs_control.csv", row.names = FALSE)
+write.csv(myTopHits.df, "data/stats_mcm_vs_control_N215.csv", row.names = FALSE)
 
 
 
@@ -479,13 +481,13 @@ vplot <- ggplot(myTopHits.df) +
   geom_vline(xintercept = -1, linetype="longdash", colour="#2C467A", size=1) +
   #annotate("rect", xmin = 1, xmax = 12, ymin = -log10(0.01), ymax = 7.5, alpha=.2, fill="#BE684D") +
   #annotate("rect", xmin = -1, xmax = -12, ymin = -log10(0.01), ymax = 7.5, alpha=.2, fill="#2C467A") +
-  labs(title="Volcano plot [MCM vs Control]",
+  labs(title="Volcano plot [MCM vs Control] N215",
        caption=paste0("produced on ", Sys.time())) +
   scale_x_continuous(n.breaks = 8)+
   theme_Publication()
 
-save_plot("plots/volcano_mcm_vs_control.svg",vplot, base_width = 15, base_height = 7)
-save_plot("plots/volcano_mcm_vs_control.png",vplot, base_width = 15, base_height = 7)
+save_plot("plots/volcano_mcm_vs_control_N215.svg",vplot)
+save_plot("plots/volcano_mcm_vs_control_N215.png",vplot)
 
 # Only in html ggplotly(vplot)
 ggplotly(vplot)
@@ -504,21 +506,20 @@ diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
 diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
 
 resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
-write.csv(resultsDEL, "data/diffLipids_mcm_vs_control.csv", row.names = FALSE)
+write.csv(resultsDEL, "data/diffLipids_mcm_vs_control_N215.csv", row.names = FALSE)
 
 ```
 
 ```{r table DEL mcm vs control}
 datatable(resultsDEL, 
           extensions = c('KeyTable', "FixedHeader"),
-          caption="Diferentially Expressed Lipids in MCM vs Control",
+          caption="Diferentially Expressed Lipids in MCM vs Control in N215",
           options = list(keys = TRUE, 
                          searchHighlight = TRUE, 
                          pageLength = 10, 
                          lengthMenu = c("10", "25", "50", "100")))
 
 ```
-***As it can be seen, no Lipid was found to be differentially represented (FDR<=0.05, LogFC>=1) between MCM and Control samples, which makes sense according to the PCA Plots results.***
 
 ## Eto vs Control
 ```{r limma and Vplot etoc vs control}
@@ -536,7 +537,7 @@ myTopHits.df <- myTopHits %>%
   as_tibble(rownames = "Lipid_Name")
 
 
-write.csv(myTopHits.df, "data/stats_eto_vs_control.csv", row.names = FALSE)
+write.csv(myTopHits.df, "data/stats_eto_vs_control_N215.csv", row.names = FALSE)
 
 
 
@@ -548,13 +549,13 @@ vplot <- ggplot(myTopHits.df) +
   geom_vline(xintercept = -1, linetype="longdash", colour="#2C467A", size=1) +
   #annotate("rect", xmin = 1, xmax = 12, ymin = -log10(0.01), ymax = 7.5, alpha=.2, fill="#BE684D") +
   #annotate("rect", xmin = -1, xmax = -12, ymin = -log10(0.01), ymax = 7.5, alpha=.2, fill="#2C467A") +
-  labs(title="Volcano plot [Eto vs Control]",
+  labs(title="Volcano plot [Eto vs Control] N215",
        caption=paste0("produced on ", Sys.time())) +
   scale_x_continuous(n.breaks = 8)+
   theme_Publication()
 
-save_plot("plots/volcano_eto_vs_control.svg",vplot, base_width = 15, base_height = 7)
-save_plot("plots/volcano_eto_vs_control.png",vplot, base_width = 15, base_height = 7)
+save_plot("plots/volcano_eto_vs_control_N215.svg",vplot)
+save_plot("plots/volcano_eto_vs_control_N215.png",vplot)
 
 # Only in html ggplotly(vplot)
 ggplotly(vplot)
@@ -573,20 +574,168 @@ diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
 diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
 
 resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
-write.csv(resultsDEL, "data/diffLipids_eto_vs_control.csv", row.names = FALSE)
+write.csv(resultsDEL, "data/diffLipids_eto_vs_control_N215.csv", row.names = FALSE)
 
 ```
 
 ```{r table DEL eto vs control}
 datatable(resultsDEL, 
           extensions = c('KeyTable', "FixedHeader"),
-          caption="Differentially Expressed Lipids in Eto vs Control",
+          caption="Differentially Expressed Lipids in Eto vs Control N215",
           options = list(keys = TRUE, 
                          searchHighlight = TRUE, 
                          pageLength = 10, 
                          lengthMenu = c("10", "25", "50", "100")))
 
 ```
+
+
+## N253
+
+### MCM vs Control
+```{r limma and Vplot mcm vs control}
+condition <- colData(d_invitro)$treatment[1:9]
+condition <- factor(condition)
+sampleLabels<-rownames(colData(d_invitro))[1:9]
+design <- model.matrix(~0 + condition)
+colnames(design) <- levels(condition)
+
+lipid_matrix_norm <- voom(exp_matrix_complete_N253, design, plot = FALSE)
+fit <- lmFit(lipid_matrix_norm, design)
+contrast.matrix_control_vs_mcm <- makeContrasts(treatment = mcm - control,
+                                 levels=design)
+
+fits <- contrasts.fit(fit, contrast.matrix_control_vs_mcm)
+ebFit <- eBayes(fits)
+myTopHits <- topTable(ebFit, adjust ="BH", coef=1, number=40000, sort.by="logFC")
+
+
+
+myTopHits.df <- myTopHits %>%
+  as_tibble(rownames = "Lipid_Name")
+
+
+write.csv(myTopHits.df, "data/stats_mcm_vs_control_N253.csv", row.names = FALSE)
+
+
+
+vplot <- ggplot(myTopHits.df) +
+  aes(y=-log10(adj.P.Val), x=logFC, text = paste("Symbol:", Lipid_Name)) +
+  geom_point(size=2) +
+  geom_hline(yintercept = -log10(0.05), linetype="longdash", colour="grey", size=1) +
+  geom_vline(xintercept = 1, linetype="longdash", colour="#BE684D", size=1) +
+  geom_vline(xintercept = -1, linetype="longdash", colour="#2C467A", size=1) +
+  #annotate("rect", xmin = 1, xmax = 12, ymin = -log10(0.01), ymax = 7.5, alpha=.2, fill="#BE684D") +
+  #annotate("rect", xmin = -1, xmax = -12, ymin = -log10(0.01), ymax = 7.5, alpha=.2, fill="#2C467A") +
+  labs(title="Volcano plot [MCM vs Control] N253",
+       caption=paste0("produced on ", Sys.time())) +
+  scale_x_continuous(n.breaks = 8)+
+  theme_Publication()
+
+save_plot("plots/volcano_mcm_vs_control_N253.svg",vplot)
+save_plot("plots/volcano_mcm_vs_control_N253.png",vplot)
+
+# Only in html ggplotly(vplot)
+ggplotly(vplot)
+
+
+```
+
+### Table of DE Lipids
+
+To identify differentially expressed lipids, precision weights were first applied to each lipid based on its mean-variance relationship using [VOOM](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Then, linear modeling and bayesian stats were employed via [Limma](https://academic.oup.com/nar/article/43/7/e47/2414268) to find lipids that were over- or under-represented by **1-logfold or more, with a false-discovery rate (FDR) of 0.05**. Multiple testing was assessed through the Benjamini-Hochberg method.
+
+```{r DEL mcm vs control}
+results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
+colnames(lipid_matrix_norm$E) <- sampleLabels
+diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
+diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
+
+resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
+write.csv(resultsDEL, "data/diffLipids_mcm_vs_control_N253.csv", row.names = FALSE)
+
+```
+
+```{r table DEL mcm vs control}
+datatable(resultsDEL, 
+          extensions = c('KeyTable', "FixedHeader"),
+          caption="Diferentially Expressed Lipids in MCM vs Control in N253",
+          options = list(keys = TRUE, 
+                         searchHighlight = TRUE, 
+                         pageLength = 10, 
+                         lengthMenu = c("10", "25", "50", "100")))
+
+```
+
+## Eto vs Control
+```{r limma and Vplot etoc vs control}
+
+contrast.matrix_control_vs_eto <- makeContrasts(treatment = eto - control,
+                                 levels=design)
+
+fits <- contrasts.fit(fit, contrast.matrix_control_vs_eto)
+ebFit <- eBayes(fits)
+myTopHits <- topTable(ebFit, adjust ="BH", coef=1, number=40000, sort.by="logFC")
+
+
+
+myTopHits.df <- myTopHits %>%
+  as_tibble(rownames = "Lipid_Name")
+
+
+write.csv(myTopHits.df, "data/stats_eto_vs_control_N253.csv", row.names = FALSE)
+
+
+
+vplot <- ggplot(myTopHits.df) +
+  aes(y=-log10(adj.P.Val), x=logFC, text = paste("Symbol:", Lipid_Name)) +
+  geom_point(size=2) +
+  geom_hline(yintercept = -log10(0.05), linetype="longdash", colour="grey", size=1) +
+  geom_vline(xintercept = 1, linetype="longdash", colour="#BE684D", size=1) +
+  geom_vline(xintercept = -1, linetype="longdash", colour="#2C467A", size=1) +
+  #annotate("rect", xmin = 1, xmax = 12, ymin = -log10(0.01), ymax = 7.5, alpha=.2, fill="#BE684D") +
+  #annotate("rect", xmin = -1, xmax = -12, ymin = -log10(0.01), ymax = 7.5, alpha=.2, fill="#2C467A") +
+  labs(title="Volcano plot [Eto vs Control] N253",
+       caption=paste0("produced on ", Sys.time())) +
+  scale_x_continuous(n.breaks = 8)+
+  theme_Publication()
+
+save_plot("plots/volcano_eto_vs_control_N253.svg",vplot)
+save_plot("plots/volcano_eto_vs_control_N253.png",vplot)
+
+# Only in html ggplotly(vplot)
+ggplotly(vplot)
+
+
+```
+
+### Table of DE Lipids
+
+To identify differentially expressed lipids, precision weights were first applied to each lipid based on its mean-variance relationship using [VOOM](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Then, linear modeling and bayesian stats were employed via [Limma](https://academic.oup.com/nar/article/43/7/e47/2414268) to find lipids that were over- or under-represented by **1-logfold or more, with a false-discovery rate (FDR) of 0.05**. Multiple testing was assessed through the *Benjamini-Hochberg* method.
+
+```{r DEL eto vs control}
+results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
+colnames(lipid_matrix_norm$E) <- sampleLabels
+diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
+diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
+
+resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
+write.csv(resultsDEL, "data/diffLipids_eto_vs_control_N253.csv", row.names = FALSE)
+
+```
+
+```{r table DEL eto vs control}
+datatable(resultsDEL, 
+          extensions = c('KeyTable', "FixedHeader"),
+          caption="Differentially Expressed Lipids in Eto vs Control N253",
+          options = list(keys = TRUE, 
+                         searchHighlight = TRUE, 
+                         pageLength = 10, 
+                         lengthMenu = c("10", "25", "50", "100")))
+
+```
+
+
 
 ------------------------------------------------------------------------
 
