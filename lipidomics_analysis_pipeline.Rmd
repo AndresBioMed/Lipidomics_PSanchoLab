@@ -64,6 +64,7 @@ library(svglite)
 library(RColorBrewer) 
 library(gplots)
 library(heatmaply)
+library(ggvenn)
 
 source('ggplot_theme_Publication.R')
 dir.create("plots", showWarnings = FALSE, recursive = TRUE)
@@ -506,6 +507,7 @@ diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
 resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
 write.csv(resultsDEL, "data/diffLipids_mcm_vs_control_N215.csv", row.names = FALSE)
 res_N215_mcm<-nrow(resultsDEL)
+DEL_N215_mcm<-resultsDEL$Lipid_Name
 ```
 
 ```{r table DEL mcm vs control N215}
@@ -574,6 +576,7 @@ diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
 resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
 write.csv(resultsDEL, "data/diffLipids_eto_vs_control_N215.csv", row.names = FALSE)
 res_N215_eto<-nrow(resultsDEL)
+DEL_N215_eto<-resultsDEL$Lipid_Name
 ```
 
 ```{r table DEL eto vs control N215}
@@ -652,6 +655,8 @@ diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
 resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
 write.csv(resultsDEL, "data/diffLipids_mcm_vs_control_N253.csv", row.names = FALSE)
 res_N253_mcm<-nrow(resultsDEL)
+DEL_N253_mcm<-resultsDEL$Lipid_Name
+
 ```
 
 ```{r table DEL mcm vs control N253}
@@ -720,6 +725,7 @@ diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
 resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
 write.csv(resultsDEL, "data/diffLipids_eto_vs_control_N253.csv", row.names = FALSE)
 res_N253_eto<-nrow(resultsDEL)
+DEL_N253_eto<-resultsDEL$Lipid_Name
 ```
 
 ```{r table DEL eto vs control N253}
@@ -797,6 +803,7 @@ diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
 resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
 write.csv(resultsDEL, "data/diffLipids_mcm_vs_control_all.csv", row.names = FALSE)
 res_all_mcm<-nrow(resultsDEL)
+DEL_all_mcm<-resultsDEL$Lipid_Name
 ```
 
 ```{r table DEL mcm vs control all}
@@ -865,6 +872,7 @@ diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
 resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
 write.csv(resultsDEL, "data/diffLipids_eto_vs_control_all.csv", row.names = FALSE)
 res_all_eto<-nrow(resultsDEL)
+DEL_all_eto<-resultsDEL$Lipid_Name
 ```
 
 ```{r table DEL eto vs control all}
@@ -880,7 +888,7 @@ datatable(resultsDEL,
 
 ## Statistical Power Effect
 
-```{r }
+```{r stats plot }
 stats_compare<-data.frame(del=c(res_all_eto, res_all_mcm, res_N253_eto, res_N253_mcm, res_N215_eto, res_N215_mcm), cell_line=rep(c("Both","N253", "N215"), each=2), comparison=rep(c("eto","mcm"),times=3))
 # Plot a ggplot bar plot
 ggplot(stats_compare, aes(x=cell_line, y=del, fill=comparison)) +
@@ -895,7 +903,19 @@ ggplot(stats_compare, aes(x=cell_line, y=del, fill=comparison)) +
 
 ```
 
-## Venn Diagram
+## Venn Diagram {.tabset}
+
+### Eto vs Control
+```{r venn eto}
+venn_eto <- ggvenn(data = list(N215 = DEL_N215_eto, N253 = DEL_N253_eto, Both=DEL_all_eto))
+venn_eto
+```
+
+### MCM vs Control
+```{r venn mcm}
+venn_mcm <- ggvenn(data = list(N215 = DEL_N215_mcm, N253 = DEL_N253_mcm, Both=DEL_all_mcm))
+venn_mcm
+```
 
 ------------------------------------------------------------------------
 
