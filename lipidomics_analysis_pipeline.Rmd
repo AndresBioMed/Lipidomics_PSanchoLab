@@ -445,7 +445,7 @@ datatable(top[, c(2,7,8)],
 ## N215
 
 ### MCM vs Control
-```{r limma and Vplot mcm vs control}
+```{r limma and Vplot mcm vs control N215}
 condition <- colData(d_invitro)$treatment[10:18]
 condition <- factor(condition)
 sampleLabels<-rownames(colData(d_invitro))[10:18]
@@ -497,7 +497,7 @@ ggplotly(vplot)
 
 To identify differentially expressed lipids, precision weights were first applied to each lipid based on its mean-variance relationship using [VOOM](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Then, linear modeling and bayesian stats were employed via [Limma](https://academic.oup.com/nar/article/43/7/e47/2414268) to find lipids that were over- or under-represented by **1-logfold or more, with a false-discovery rate (FDR) of 0.05**. Multiple testing was assessed through the Benjamini-Hochberg method.
 
-```{r DEL mcm vs control}
+```{r DEL mcm vs control N215}
 results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
 colnames(lipid_matrix_norm$E) <- sampleLabels
 diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
@@ -508,7 +508,7 @@ write.csv(resultsDEL, "data/diffLipids_mcm_vs_control_N215.csv", row.names = FAL
 res_N215_mcm<-nrow(resultsDEL)
 ```
 
-```{r table DEL mcm vs control}
+```{r table DEL mcm vs control N215}
 datatable(resultsDEL, 
           extensions = c('KeyTable', "FixedHeader"),
           caption="Diferentially Expressed Lipids in MCM vs Control in N215",
@@ -520,7 +520,7 @@ datatable(resultsDEL,
 ```
 
 ### Eto vs Control
-```{r limma and Vplot etoc vs control}
+```{r limma and Vplot etoc vs control N215}
 
 contrast.matrix_control_vs_eto <- makeContrasts(treatment = eto - control,
                                  levels=design)
@@ -565,7 +565,7 @@ ggplotly(vplot)
 
 To identify differentially expressed lipids, precision weights were first applied to each lipid based on its mean-variance relationship using [VOOM](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Then, linear modeling and bayesian stats were employed via [Limma](https://academic.oup.com/nar/article/43/7/e47/2414268) to find lipids that were over- or under-represented by **1-logfold or more, with a false-discovery rate (FDR) of 0.05**. Multiple testing was assessed through the *Benjamini-Hochberg* method.
 
-```{r DEL eto vs control}
+```{r DEL eto vs control N215}
 results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
 colnames(lipid_matrix_norm$E) <- sampleLabels
 diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
@@ -576,7 +576,7 @@ write.csv(resultsDEL, "data/diffLipids_eto_vs_control_N215.csv", row.names = FAL
 res_N215_eto<-nrow(resultsDEL)
 ```
 
-```{r table DEL eto vs control}
+```{r table DEL eto vs control N215}
 datatable(resultsDEL, 
           extensions = c('KeyTable', "FixedHeader"),
           caption="Differentially Expressed Lipids in Eto vs Control N215",
@@ -591,7 +591,7 @@ datatable(resultsDEL,
 ## N253
 
 ### MCM vs Control
-```{r limma and Vplot mcm vs control}
+```{r limma and Vplot mcm vs control N253}
 condition <- colData(d_invitro)$treatment[1:9]
 condition <- factor(condition)
 sampleLabels<-rownames(colData(d_invitro))[1:9]
@@ -643,7 +643,7 @@ ggplotly(vplot)
 
 To identify differentially expressed lipids, precision weights were first applied to each lipid based on its mean-variance relationship using [VOOM](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Then, linear modeling and bayesian stats were employed via [Limma](https://academic.oup.com/nar/article/43/7/e47/2414268) to find lipids that were over- or under-represented by **1-logfold or more, with a false-discovery rate (FDR) of 0.05**. Multiple testing was assessed through the Benjamini-Hochberg method.
 
-```{r DEL mcm vs control}
+```{r DEL mcm vs control N253}
 results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
 colnames(lipid_matrix_norm$E) <- sampleLabels
 diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
@@ -654,7 +654,7 @@ write.csv(resultsDEL, "data/diffLipids_mcm_vs_control_N253.csv", row.names = FAL
 res_N253_mcm<-nrow(resultsDEL)
 ```
 
-```{r table DEL mcm vs control}
+```{r table DEL mcm vs control N253}
 datatable(resultsDEL, 
           extensions = c('KeyTable', "FixedHeader"),
           caption="Diferentially Expressed Lipids in MCM vs Control in N253",
@@ -666,7 +666,7 @@ datatable(resultsDEL,
 ```
 
 ### Eto vs Control
-```{r limma and Vplot etoc vs control}
+```{r limma and Vplot etoc vs control N253}
 
 contrast.matrix_control_vs_eto <- makeContrasts(treatment = eto - control,
                                  levels=design)
@@ -711,7 +711,7 @@ ggplotly(vplot)
 
 To identify differentially expressed lipids, precision weights were first applied to each lipid based on its mean-variance relationship using [VOOM](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Then, linear modeling and bayesian stats were employed via [Limma](https://academic.oup.com/nar/article/43/7/e47/2414268) to find lipids that were over- or under-represented by **1-logfold or more, with a false-discovery rate (FDR) of 0.05**. Multiple testing was assessed through the *Benjamini-Hochberg* method.
 
-```{r DEL eto vs control}
+```{r DEL eto vs control N253}
 results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
 colnames(lipid_matrix_norm$E) <- sampleLabels
 diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
@@ -722,7 +722,7 @@ write.csv(resultsDEL, "data/diffLipids_eto_vs_control_N253.csv", row.names = FAL
 res_N253_eto<-nrow(resultsDEL)
 ```
 
-```{r table DEL eto vs control}
+```{r table DEL eto vs control N253}
 datatable(resultsDEL, 
           extensions = c('KeyTable', "FixedHeader"),
           caption="Differentially Expressed Lipids in Eto vs Control N253",
@@ -736,7 +736,7 @@ datatable(resultsDEL,
 ## All Cell lines
 
 ### MCM vs Control
-```{r limma and Vplot mcm vs control}
+```{r limma and Vplot mcm vs control all}
 condition <- colData(d_invitro)$treatment
 condition <- factor(condition)
 sampleLabels<-rownames(colData(d_invitro))
@@ -788,7 +788,7 @@ ggplotly(vplot)
 
 To identify differentially expressed lipids, precision weights were first applied to each lipid based on its mean-variance relationship using [VOOM](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Then, linear modeling and bayesian stats were employed via [Limma](https://academic.oup.com/nar/article/43/7/e47/2414268) to find lipids that were over- or under-represented by **1-logfold or more, with a false-discovery rate (FDR) of 0.05**. Multiple testing was assessed through the Benjamini-Hochberg method.
 
-```{r DEL mcm vs control}
+```{r DEL mcm vs control all}
 results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
 colnames(lipid_matrix_norm$E) <- sampleLabels
 diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
@@ -799,7 +799,7 @@ write.csv(resultsDEL, "data/diffLipids_mcm_vs_control_all.csv", row.names = FALS
 res_all_mcm<-nrow(resultsDEL)
 ```
 
-```{r table DEL mcm vs control}
+```{r table DEL mcm vs control all}
 datatable(resultsDEL, 
           extensions = c('KeyTable', "FixedHeader"),
           caption="Diferentially Expressed Lipids in MCM vs Control in All Lines",
@@ -811,7 +811,7 @@ datatable(resultsDEL,
 ```
 
 ### Eto vs Control
-```{r limma and Vplot etoc vs control}
+```{r limma and Vplot etoc vs control all}
 
 contrast.matrix_control_vs_eto <- makeContrasts(treatment = eto - control,
                                  levels=design)
@@ -856,7 +856,7 @@ ggplotly(vplot)
 
 To identify differentially expressed lipids, precision weights were first applied to each lipid based on its mean-variance relationship using [VOOM](https://genomebiology.biomedcentral.com/articles/10.1186/gb-2014-15-2-r29). Then, linear modeling and bayesian stats were employed via [Limma](https://academic.oup.com/nar/article/43/7/e47/2414268) to find lipids that were over- or under-represented by **1-logfold or more, with a false-discovery rate (FDR) of 0.05**. Multiple testing was assessed through the *Benjamini-Hochberg* method.
 
-```{r DEL eto vs control}
+```{r DEL eto vs control all}
 results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
 colnames(lipid_matrix_norm$E) <- sampleLabels
 diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
@@ -867,7 +867,7 @@ write.csv(resultsDEL, "data/diffLipids_eto_vs_control_all.csv", row.names = FALS
 res_all_eto<-nrow(resultsDEL)
 ```
 
-```{r table DEL eto vs control}
+```{r table DEL eto vs control all}
 datatable(resultsDEL, 
           extensions = c('KeyTable', "FixedHeader"),
           caption="Differentially Expressed Lipids in Eto vs Control All Lines",
@@ -878,7 +878,24 @@ datatable(resultsDEL,
 
 ```
 
+## Statistical Power Effect
 
+```{r }
+stats_compare<-data.frame(del=c(res_all_eto, res_all_mcm, res_N253_eto, res_N253_mcm, res_N215_eto, res_N215_mcm), cell_line=rep(c("Both","N253", "N215"), each=2), comparison=rep(c("eto","mcm"),times=3))
+# Plot a ggplot bar plot
+ggplot(stats_compare, aes(x=cell_line, y=del, fill=comparison)) +
+  geom_bar(stat="identity", position=position_dodge()) +
+  labs(title="Number of DE Lipids in Each Comparison",
+       y="Number of DE Lipids",
+       x="Subset Used",
+       caption=paste0("produced on ", Sys.time())) +
+  theme_Publication() +
+  scale_fill_manual(values=c("#2C467A", "#BE684D", "#F0E442")) +
+  theme(legend.position = "top")
+
+```
+
+## Venn Diagram
 
 ------------------------------------------------------------------------
 
