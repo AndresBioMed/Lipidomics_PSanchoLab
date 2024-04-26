@@ -936,6 +936,31 @@ common_mcm<-Reduce(intersect, list(DEL_N215_mcm, DEL_N253_mcm, DEL_all_mcm))
 
 ```
 
+### Eto & MCM in N215
+```{r venn eto mcm n215}
+venn_eto_mcm_n215 <- ggvenn(data = list(N215_eto = DEL_N215_eto, N215_mcm = DEL_N215_mcm))
+venn_eto
+```
+
+```{r venn etco mcm in N215}
+common_eto_mcm_n215<-DEL_N215_eto[DEL_N215_eto %in% DEL_N215_mcm]
+print(paste0("Common Lipids between MCM and Eto in N215 are ",paste(common_eto_mcm_n215, collapse=" ") ))
+
+```
+
+### Eto & MCM in N253
+```{r venn eto mcm n253}
+venn_eto_mcm_n253 <- ggvenn(data = list(N253_eto = DEL_N253_eto, N253_mcm = DEL_N253_mcm))
+venn_eto
+```
+
+```{r venn etco mcm in N215}
+common_eto_mcm_n253<-DEL_N253_eto[DEL_N253_eto %in% DEL_N253_mcm]
+print(paste0("Common Lipids between MCM and Eto in N253 are ",paste(common_eto_mcm_n253, collapse=" ") ))
+
+```
+
+
 ------------------------------------------------------------------------
 
 # Heatmaps {.tabset}
@@ -1105,6 +1130,8 @@ heatmaply(lipid_matrix_norm$E,
           scale='row',
           main ="Heatmap across all Lipids")
 ```
+
+
 
 
 ------------------------------------------------------------------------
