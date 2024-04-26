@@ -501,10 +501,10 @@ To identify differentially expressed lipids, precision weights were first applie
 ```{r DEL mcm vs control N215}
 results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
 colnames(lipid_matrix_norm$E) <- sampleLabels
-diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
-diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
+diffLipids_mcm_n215 <- lipid_matrix_norm$E[results[,1] !=0,]
+diffLipids.df_mcm_n215 <- as_tibble(diffLipids_mcm_n215, rownames = "Lipid_Names")
 
-resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
+resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df_mcm_n215$Lipid_Names,]
 write.csv(resultsDEL, "data/diffLipids_mcm_vs_control_N215.csv", row.names = FALSE)
 res_N215_mcm<-nrow(resultsDEL)
 DEL_N215_mcm<-resultsDEL$Lipid_Name
@@ -570,10 +570,10 @@ To identify differentially expressed lipids, precision weights were first applie
 ```{r DEL eto vs control N215}
 results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
 colnames(lipid_matrix_norm$E) <- sampleLabels
-diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
-diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
+diffLipids_eto_n215 <- lipid_matrix_norm$E[results[,1] !=0,]
+diffLipids.df_eto_n215 <- as_tibble(diffLipids_eto_n215, rownames = "Lipid_Names")
 
-resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
+resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df_eto_n215$Lipid_Names,]
 write.csv(resultsDEL, "data/diffLipids_eto_vs_control_N215.csv", row.names = FALSE)
 res_N215_eto<-nrow(resultsDEL)
 DEL_N215_eto<-resultsDEL$Lipid_Name
@@ -649,10 +649,10 @@ To identify differentially expressed lipids, precision weights were first applie
 ```{r DEL mcm vs control N253}
 results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
 colnames(lipid_matrix_norm$E) <- sampleLabels
-diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
-diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
+diffLipids_mcm_n253 <- lipid_matrix_norm$E[results[,1] !=0,]
+diffLipids.df_mcm_n253 <- as_tibble(diffLipids_mcm_n253, rownames = "Lipid_Names")
 
-resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
+resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df_mcm_n253$Lipid_Names,]
 write.csv(resultsDEL, "data/diffLipids_mcm_vs_control_N253.csv", row.names = FALSE)
 res_N253_mcm<-nrow(resultsDEL)
 DEL_N253_mcm<-resultsDEL$Lipid_Name
@@ -719,10 +719,10 @@ To identify differentially expressed lipids, precision weights were first applie
 ```{r DEL eto vs control N253}
 results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
 colnames(lipid_matrix_norm$E) <- sampleLabels
-diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
-diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
+diffLipids_eto_n253 <- lipid_matrix_norm$E[results[,1] !=0,]
+diffLipids.df_eto_n253 <- as_tibble(diffLipids_eto_n253, rownames = "Lipid_Names")
 
-resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
+resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df_eto_n253$Lipid_Names,]
 write.csv(resultsDEL, "data/diffLipids_eto_vs_control_N253.csv", row.names = FALSE)
 res_N253_eto<-nrow(resultsDEL)
 DEL_N253_eto<-resultsDEL$Lipid_Name
@@ -797,10 +797,10 @@ To identify differentially expressed lipids, precision weights were first applie
 ```{r DEL mcm vs control all}
 results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
 colnames(lipid_matrix_norm$E) <- sampleLabels
-diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
-diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
+diffLipids_mcm_all <- lipid_matrix_norm$E[results[,1] !=0,]
+diffLipids.df_mcm_all <- as_tibble(diffLipids_mcm_all, rownames = "Lipid_Names")
 
-resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
+resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df_mcm_all$Lipid_Names,]
 write.csv(resultsDEL, "data/diffLipids_mcm_vs_control_all.csv", row.names = FALSE)
 res_all_mcm<-nrow(resultsDEL)
 DEL_all_mcm<-resultsDEL$Lipid_Name
@@ -866,10 +866,10 @@ To identify differentially expressed lipids, precision weights were first applie
 ```{r DEL eto vs control all}
 results <- decideTests(ebFit, method="global", adjust.method="BH", p.value=0.05, lfc=1)
 colnames(lipid_matrix_norm$E) <- sampleLabels
-diffLipids <- lipid_matrix_norm$E[results[,1] !=0,]
-diffLipids.df <- as_tibble(diffLipids, rownames = "Lipid_Names")
+diffLipids_eto_all <- lipid_matrix_norm$E[results[,1] !=0,]
+diffLipids.df_eto_all <- as_tibble(diffLipids_eto_all, rownames = "Lipid_Names")
 
-resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df$Lipid_Names,]
+resultsDEL<-myTopHits.df[myTopHits.df$Lipid_Name %in% diffLipids.df_eto_all$Lipid_Names,]
 write.csv(resultsDEL, "data/diffLipids_eto_vs_control_all.csv", row.names = FALSE)
 res_all_eto<-nrow(resultsDEL)
 DEL_all_eto<-resultsDEL$Lipid_Name
@@ -942,7 +942,7 @@ venn_eto_mcm_n215 <- ggvenn(data = list(N215_eto = DEL_N215_eto, N215_mcm = DEL_
 venn_eto
 ```
 
-```{r venn etco mcm in N215}
+```{r common eto mcm in N215}
 common_eto_mcm_n215<-DEL_N215_eto[DEL_N215_eto %in% DEL_N215_mcm]
 print(paste0("Common Lipids between MCM and Eto in N215 are ",paste(common_eto_mcm_n215, collapse=" ") ))
 
@@ -954,7 +954,7 @@ venn_eto_mcm_n253 <- ggvenn(data = list(N253_eto = DEL_N253_eto, N253_mcm = DEL_
 venn_eto
 ```
 
-```{r venn etco mcm in N215}
+```{r common eto mcm in N253}
 common_eto_mcm_n253<-DEL_N253_eto[DEL_N253_eto %in% DEL_N253_mcm]
 print(paste0("Common Lipids between MCM and Eto in N253 are ",paste(common_eto_mcm_n253, collapse=" ") ))
 
@@ -967,13 +967,13 @@ print(paste0("Common Lipids between MCM and Eto in N253 are ",paste(common_eto_m
 
 Pearson correlation was used to cluster all differentially expressed lipids, which were then represented as heatmap with the data scaled by *Zscore* for each row. On the other hand, Spearman correlation was used to cluster all samples. Two *modules* can be seen, being either over- or under-represented depending on the condition of the samples.
 
-## Only DE Lipids Eto vs Control
+## Eto vs Control All Cell lines
 
-```{r heatmap DEL, results='hide'}
+```{r heatmap DEL eto all, results='hide'}
 myheatcolors <- rev(brewer.pal(name="RdBu", n=11))
-clustRows <- hclust(as.dist(1-cor(t(diffLipids), method="pearson")), method="complete") 
+clustRows <- hclust(as.dist(1-cor(t(diffLipids_eto_all), method="pearson")), method="complete") 
 
-clustColumns <- hclust(as.dist(1-cor(diffLipids, method="spearman")), method="complete")
+clustColumns <- hclust(as.dist(1-cor(diffLipids_eto_all, method="spearman")), method="complete")
 module.assign <- cutree(clustRows, k=2) #Important parametre
 module.color <- rainbow(length(unique(module.assign)), start=0.1, end=0.9) 
 module.color <- module.color[as.vector(module.assign)] 
@@ -982,8 +982,8 @@ module.assign_col<-cutree(clustColumns, k=2) #Important parametre
 module.color_col <- rainbow(length(unique(module.assign_col)), start=0.1, end=0.9) 
 module.color_col <- module.color_col[as.vector(module.assign_col)]
 
-svg(file = "plots/heatmap_DEL_eto_vs_control.svg")
-heatmap.2(diffLipids, 
+svg(file = "plots/heatmap_DEL_eto_vs_control_alllines.svg")
+heatmap.2(diffLipids_eto_all, 
           Rowv = as.dendrogram(clustRows), 
           Colv = as.dendrogram(clustColumns),
           RowSideColors = module.color,
@@ -1000,7 +1000,7 @@ heatmap.2(diffLipids,
           key.title = NA,  # Remove color key title
           key.ylab = NULL,  # Remove color key y-axis label
           key.xlab = "Z-Score",  # Add x-axis label to the color key
-          main = "Heatmap of Lipid Differences",  # Add a main title
+          main = "Lipid Differences Eto vs Control All Lines",  # Add a main title
           xlab = "Samples",  # Label for x-axis
           ylab = "Lipids",  # Label for y-axis
           mar = c(5, 4),  # Adjust plot margins
@@ -1009,8 +1009,8 @@ heatmap.2(diffLipids,
 )
 dev.off()
 
-png(file = "plots/heatmap_DEL_eto_vs_control.png")
-heatmap.2(diffLipids, 
+png(file = "plots/heatmap_DEL_eto_vs_control_alllines.png")
+heatmap.2(diffLipids_eto_all, 
           Rowv = as.dendrogram(clustRows), 
           Colv = as.dendrogram(clustColumns),
           RowSideColors = module.color,
@@ -1027,7 +1027,7 @@ heatmap.2(diffLipids,
           key.title = NA,  # Remove color key title
           key.ylab = NULL,  # Remove color key y-axis label
           key.xlab = "Z-Score",  # Add x-axis label to the color key
-          main = "Heatmap of Lipid Differences",  # Add a main title
+          main = "Lipid Differences Eto vs Control All Lines",  # Add a main title
           xlab = "Samples",  # Label for x-axis
           ylab = "Lipids",  # Label for y-axis
           mar = c(5, 4),  # Adjust plot margins
@@ -1037,20 +1037,438 @@ heatmap.2(diffLipids,
 dev.off()
 ```
 
-```{r heatmaply DELs}
+```{r heatmaply DELs eto all}
 
-heatmaply(diffLipids, 
+heatmaply(diffLipids_eto_all, 
           colors = myheatcolors,
           Rowv=as.dendrogram(clustRows),
           RowSideColors=module.color,
           ColSideColors = module.color_col,
           showticklabels=c(TRUE,FALSE),
           scale='row',
-          main ="Heatmap across all Lipids")
+          main ="Lipid Differences Eto vs Control All Lines")
 
 ```
 
-## All Lipids
+## MCM vs Control All Cell Lines
+
+```{r heatmap DEL mcm all, results='hide'}
+myheatcolors <- rev(brewer.pal(name="RdBu", n=11))
+clustRows <- hclust(as.dist(1-cor(t(diffLipids_mcm_all), method="pearson")), method="complete") 
+
+clustColumns <- hclust(as.dist(1-cor(diffLipids_mcm_all, method="spearman")), method="complete")
+module.assign <- cutree(clustRows, k=2) #Important parametre
+module.color <- rainbow(length(unique(module.assign)), start=0.1, end=0.9) 
+module.color <- module.color[as.vector(module.assign)] 
+
+module.assign_col<-cutree(clustColumns, k=2) #Important parametre
+module.color_col <- rainbow(length(unique(module.assign_col)), start=0.1, end=0.9) 
+module.color_col <- module.color_col[as.vector(module.assign_col)]
+
+svg(file = "plots/heatmap_DEL_mcm_vs_control_alllines.svg")
+heatmap.2(diffLipids_mcm_all, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Lipid Differences MCM vs Control All Lines",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+
+png(file = "plots/heatmap_DEL_mcm_vs_control_alllines.png")
+heatmap.2(diffLipids_mcm_all, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Lipid Differences MCM vs Control All Lines",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+```
+
+```{r heatmaply DELs mcm all}
+
+heatmaply(diffLipids_mcm_all, 
+          colors = myheatcolors,
+          Rowv=as.dendrogram(clustRows),
+          RowSideColors=module.color,
+          ColSideColors = module.color_col,
+          showticklabels=c(TRUE,FALSE),
+          scale='row',
+          main ="Lipid Differences MCM vs Control All Lines")
+
+```
+
+## Eto vs Control N215
+
+```{r heatmap DEL eto n215, results='hide'}
+myheatcolors <- rev(brewer.pal(name="RdBu", n=11))
+clustRows <- hclust(as.dist(1-cor(t(diffLipids_eto_n215), method="pearson")), method="complete") 
+
+clustColumns <- hclust(as.dist(1-cor(diffLipids_eto_n215, method="spearman")), method="complete")
+module.assign <- cutree(clustRows, k=2) #Important parametre
+module.color <- rainbow(length(unique(module.assign)), start=0.1, end=0.9) 
+module.color <- module.color[as.vector(module.assign)] 
+
+module.assign_col<-cutree(clustColumns, k=2) #Important parametre
+module.color_col <- rainbow(length(unique(module.assign_col)), start=0.1, end=0.9) 
+module.color_col <- module.color_col[as.vector(module.assign_col)]
+
+svg(file = "plots/heatmap_DEL_eto_vs_control_n215.svg")
+heatmap.2(diffLipids_eto_n215, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Lipid Differences Eto vs Control N215",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+
+png(file = "plots/heatmap_DEL_eto_vs_control_n215.png")
+heatmap.2(diffLipids_eto_n215, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Lipid Differences Eto vs Control N215",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+```
+
+```{r heatmaply DELs eto n215}
+
+heatmaply(diffLipids_eto_n215, 
+          colors = myheatcolors,
+          Rowv=as.dendrogram(clustRows),
+          RowSideColors=module.color,
+          ColSideColors = module.color_col,
+          showticklabels=c(TRUE,FALSE),
+          scale='row',
+          main ="Lipid Differences Eto vs Control N215")
+
+```
+
+## MCM vs Control N215
+
+```{r heatmap DEL mcm n215, results='hide'}
+myheatcolors <- rev(brewer.pal(name="RdBu", n=11))
+clustRows <- hclust(as.dist(1-cor(t(diffLipids_mcm_n215), method="pearson")), method="complete") 
+
+clustColumns <- hclust(as.dist(1-cor(diffLipids_mcm_n215, method="spearman")), method="complete")
+module.assign <- cutree(clustRows, k=2) #Important parametre
+module.color <- rainbow(length(unique(module.assign)), start=0.1, end=0.9) 
+module.color <- module.color[as.vector(module.assign)] 
+
+module.assign_col<-cutree(clustColumns, k=2) #Important parametre
+module.color_col <- rainbow(length(unique(module.assign_col)), start=0.1, end=0.9) 
+module.color_col <- module.color_col[as.vector(module.assign_col)]
+
+svg(file = "plots/heatmap_DEL_mcm_vs_control_n215.svg")
+heatmap.2(diffLipids_mcm_n215, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Lipid Differences MCM vs Control N215",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+
+png(file = "plots/heatmap_DEL_mcm_vs_control_n215.png")
+heatmap.2(diffLipids_mcm_215, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Lipid Differences MCM vs Control N215",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+```
+
+```{r heatmaply DELs mcm n215}
+
+heatmaply(diffLipids_mcm_n215, 
+          colors = myheatcolors,
+          Rowv=as.dendrogram(clustRows),
+          RowSideColors=module.color,
+          ColSideColors = module.color_col,
+          showticklabels=c(TRUE,FALSE),
+          scale='row',
+          main ="Lipid Differences Eto vs Control N215")
+
+```
+
+
+## Eto vs Control N253
+
+```{r heatmap DEL eto n253, results='hide'}
+myheatcolors <- rev(brewer.pal(name="RdBu", n=11))
+clustRows <- hclust(as.dist(1-cor(t(diffLipids_eto_n253), method="pearson")), method="complete") 
+
+clustColumns <- hclust(as.dist(1-cor(diffLipids_eto_n253, method="spearman")), method="complete")
+module.assign <- cutree(clustRows, k=2) #Important parametre
+module.color <- rainbow(length(unique(module.assign)), start=0.1, end=0.9) 
+module.color <- module.color[as.vector(module.assign)] 
+
+module.assign_col<-cutree(clustColumns, k=2) #Important parametre
+module.color_col <- rainbow(length(unique(module.assign_col)), start=0.1, end=0.9) 
+module.color_col <- module.color_col[as.vector(module.assign_col)]
+
+svg(file = "plots/heatmap_DEL_eto_vs_control_n253.svg")
+heatmap.2(diffLipids_eto_n253, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Lipid Differences Eto vs Control N253",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+
+png(file = "plots/heatmap_DEL_eto_vs_control_n253.png")
+heatmap.2(diffLipids_eto_253, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Lipid Differences Eto vs Control N253",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+```
+
+```{r heatmaply DELs eto n253}
+
+heatmaply(diffLipids_eto_n253, 
+          colors = myheatcolors,
+          Rowv=as.dendrogram(clustRows),
+          RowSideColors=module.color,
+          ColSideColors = module.color_col,
+          showticklabels=c(TRUE,FALSE),
+          scale='row',
+          main ="Lipid Differences Eto vs Control N253")
+
+```
+
+## MCM vs Control N253
+
+```{r heatmap DEL mcm n253, results='hide'}
+myheatcolors <- rev(brewer.pal(name="RdBu", n=11))
+clustRows <- hclust(as.dist(1-cor(t(diffLipids_mcm_n253), method="pearson")), method="complete") 
+
+clustColumns <- hclust(as.dist(1-cor(diffLipids_mcm_n253, method="spearman")), method="complete")
+module.assign <- cutree(clustRows, k=2) #Important parametre
+module.color <- rainbow(length(unique(module.assign)), start=0.1, end=0.9) 
+module.color <- module.color[as.vector(module.assign)] 
+
+module.assign_col<-cutree(clustColumns, k=2) #Important parametre
+module.color_col <- rainbow(length(unique(module.assign_col)), start=0.1, end=0.9) 
+module.color_col <- module.color_col[as.vector(module.assign_col)]
+
+svg(file = "plots/heatmap_DEL_mcm_vs_control_n253.svg")
+heatmap.2(diffLipids_mcm_n253, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Lipid Differences MCM vs Control N253",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+
+png(file = "plots/heatmap_DEL_mcm_vs_control_n253.png")
+heatmap.2(diffLipids_mcm_253, 
+          Rowv = as.dendrogram(clustRows), 
+          Colv = as.dendrogram(clustColumns),
+          RowSideColors = module.color,
+          ColSideColors = module.color_col,
+          col = myheatcolors, 
+          scale = "row", 
+          labRow = NA,
+          density.info = "none", 
+          trace = "none",  
+          cexRow = 0.8,  # Adjust row label size
+          cexCol = 0.8,  # Adjust column label size
+          margins = c(10, 10),  # Increase margin size
+          keysize = 1.2,  # Adjust size of the color key
+          key.title = NA,  # Remove color key title
+          key.ylab = NULL,  # Remove color key y-axis label
+          key.xlab = "Z-Score",  # Add x-axis label to the color key
+          main = "Lipid Differences MCM vs Control N253",  # Add a main title
+          xlab = "Samples",  # Label for x-axis
+          ylab = "Lipids",  # Label for y-axis
+          mar = c(5, 4),  # Adjust plot margins
+          srtCol = 45,  # Rotate column labels for better readability
+          dendrogram = "both"  # Show both row and column dendrograms
+)
+dev.off()
+```
+
+```{r heatmaply DELs mcm n253}
+
+heatmaply(diffLipids_mcm_n253, 
+          colors = myheatcolors,
+          Rowv=as.dendrogram(clustRows),
+          RowSideColors=module.color,
+          ColSideColors = module.color_col,
+          showticklabels=c(TRUE,FALSE),
+          scale='row',
+          main ="Lipid Differences Eto vs Control N253")
+
+```
+
+
+
+## All Lipids (regardless of stats success)
 
 ```{r heatmap ALL, results='hide'}
 myheatcolors <- rev(brewer.pal(name="RdBu", n=11))
